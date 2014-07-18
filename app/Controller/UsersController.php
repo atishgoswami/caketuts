@@ -27,6 +27,24 @@ class UsersController extends AppController
 
 
     /**
+     * beforeFilter callback
+     *
+     * @return void
+     */
+    public function beforeFilter()
+    {
+        /**
+         * Calls the beforeFilter() action of the parent
+         * class i.e. AppController
+         */
+        parent::beforeFilter();
+
+        // Allow users to register and logout.
+        $this->Auth->allow('add', 'logout');
+    }//end beforeFilter()
+
+
+    /**
      * Shows user listings
      *
      * @return void
