@@ -78,9 +78,11 @@ class UsersController extends AppController
         $this->User->id = $id;
         //check if any such record exists
         if (!$this->User->exists()) {
+            // Throws an exception and stops execution of code
             throw new NotFoundException(__('Invalid user'));
         }
-
+        //sets the data of the user obtained from the id passed
+        //in a view variable "user"
         $this->set('user', $this->User->read(null, $id));
     }//end view()
 
@@ -92,12 +94,19 @@ class UsersController extends AppController
      */
     public function add()
     {
+        //Check if it is a post request
         if ($this->request->is('post')) {
+            //Sets the primary key of the model to null
+            //so that the submitted add can be added as
+            //new entry in the table
             $this->User->create();
             if ($this->User->save($this->request->data)) {
+                //Success message to be show to the user
                 $this->Session->setFlash(__('The user has been saved'));
+                //redirects to index of the current controller
                 return $this->redirect(array('action' => 'index'));
             }
+            //Error message to be show to the user
             $this->Session->setFlash(
                 __('The user could not be saved. Please, try again.')
             );
@@ -114,20 +123,33 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
+        //Set the model primaryKey to $id value
         $this->User->id = $id;
+        //check if any such record exists
         if (!$this->User->exists()) {
+            // Throws an exception and stops execution of code
             throw new NotFoundException(__('Invalid user'));
         }
+        //Checks either the request is post or a put request
+        //"put" request check is helpful when building a rest api
         if ($this->request->is('post') || $this->request->is('put')) {
+            // Edits the data of the record whose primary key is
+            // set in the model [$this->User->id = $id]
             if ($this->User->save($this->request->data)) {
+                //Success message to be show to the user
                 $this->Session->setFlash(__('The user has been saved'));
+                //redirects to index of the current controller
                 return $this->redirect(array('action' => 'index'));
             }
+            //Error message to be show to the user
             $this->Session->setFlash(
                 __('The user could not be saved. Please, try again.')
             );
         } else {
+            //If not a get request the fetch data for table for the id
+            //passed in the params
             $this->request->data = $this->User->read(null, $id);
+            //unset password
             unset($this->request->data['User']['password']);
         }
     }//end edit()
@@ -142,17 +164,27 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
+        //Will allow a post request to proceed
         $this->request->onlyAllow('post');
-
+        //Primary key of the model is set to the $id
+        //passed in the action
         $this->User->id = $id;
+        //Checks if the record exists
         if (!$this->User->exists()) {
+            // throws execption if record on present
+            // and stops execution
             throw new NotFoundException(__('Invalid user'));
         }
+        // Will try to delete the records and return a boolean value
         if ($this->User->delete()) {
+            //Sets success message for the user
             $this->Session->setFlash(__('User deleted'));
+            //redirects to index action of the current controller
             return $this->redirect(array('action' => 'index'));
         }
+        //Sets error message for the user
         $this->Session->setFlash(__('User was not deleted'));
+        //redirects to index action of the current controller
         return $this->redirect(array('action' => 'index'));
 
     }//end delete()

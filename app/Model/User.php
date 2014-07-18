@@ -70,12 +70,17 @@ class User extends AppModel
      */
     public function beforeSave($options = array())
     {
+        // Checks if a the password was submitted for the to save or edit
         if (isset($this->data[$this->alias]['password'])) {
-            $passwordHasher                       = new SimplePasswordHasher();
+            //Hashing class is instantiated
+            $passwordHasher = new SimplePasswordHasher();
+            //An hashed value of the submitted password is
+            //replace in the password field
             $this->data[$this->alias]['password'] = $passwordHasher->hash(
                 $this->data[$this->alias]['password']
             );
         }
+        //Always return true to process saving the data
         return true;
     }//end beforeSave()
 
