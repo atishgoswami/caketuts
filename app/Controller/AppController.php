@@ -7,7 +7,7 @@
  *
  * @category Controller
  * @package  Shdlr
- * @author   Atish Goswami <atishgoswami@gmail.com.com>
+ * @author   Atish Goswami <atishgoswami@gmail.com>
  * @license  http://shdlr.com Private
  * @link     http://shdlr.com
  */
@@ -17,7 +17,7 @@ App::uses('Controller', 'Controller');
  *
  * @category Controller
  * @package  Shdlr
- * @author   Atish Goswami <atishgoswami@gmail.com.com>
+ * @author   Atish Goswami <atishgoswami@gmail.com>
  * @license  http://shdlr.com Private
  * @link     http://shdlr.com
  *
@@ -40,7 +40,8 @@ class AppController extends Controller
                                         'logoutRedirect' => array(
                                                              'controller' => 'pages',
                                                              'action'     => 'display','home'
-                                                            )
+                                                            ),
+                                        'authorize'      => array('Controller'), // Added this line
                                        )
                          );
 
@@ -54,6 +55,26 @@ class AppController extends Controller
     {
         $this->Auth->allow('index', 'view');
     }//end beforeFilter()
+
+
+    /**
+     * isAuthorized Callback function
+     * for the AppController
+     *
+     * @param array $user user details present in the session
+     *
+     * @return boolean
+     */
+    public function isAuthorized($user)
+    {
+        // Admin can access every action
+        if (isset($user['role']) && $user['role'] === 'admin') {
+            return true;
+        }
+
+        // Default deny
+        return false;
+    }//end isAuthorized()
 
 
 }//end class

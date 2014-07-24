@@ -35,4 +35,21 @@ class Post extends AppModel
                         'title' => array('rule' => 'notEmpty'),
                         'body'  => array('rule' => 'notEmpty')
                        );
+
+
+    /**
+     * Method will check the ownership of
+     * the post against the user id
+     *
+     * @param integer $post post id
+     * @param integer $user user id
+     *
+     * @return boolean
+     */
+    public function isOwnedBy($post, $user)
+    {
+        return (bool) $this->field('id', array('id' => $post, 'user_id' => $user)) !== false;
+    }//end isOwnedBy()
+
+
 }//end class

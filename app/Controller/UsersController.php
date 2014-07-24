@@ -6,7 +6,7 @@
  *
  * @category Controller
  * @package  Caketuts
- * @author   Atish Goswami <atishgoswami@gmail.com.com>
+ * @author   Atish Goswami <atishgoswami@gmail.com>
  * @license  http://caketuts.com Public
  * @link     http://caketuts.com
  */
@@ -18,7 +18,7 @@ App::uses('AppController', 'Controller');
  *
  * @category Controller
  * @package  Caketuts
- * @author   Atish Goswami <atishgoswami@gmail.com.com>
+ * @author   Atish Goswami <atishgoswami@gmail.com>
  * @license  http://caketuts.com Public
  * @link     http://caketuts.com
  */
