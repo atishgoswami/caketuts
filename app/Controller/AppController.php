@@ -42,7 +42,8 @@ class AppController extends Controller
                                                              'action'     => 'display','home'
                                                             ),
                                         'authorize'      => array('Controller'), // Added this line
-                                       )
+                                       ),
+                          'Acl'     => array(),
                          );
 
 
