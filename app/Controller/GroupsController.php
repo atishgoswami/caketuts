@@ -62,7 +62,7 @@ class GroupsController extends AppController
         //Checks if the request method is POST
         if ($this->request->is('post')) {
             //Calls the Group Model Save Model
-            if ($this->Group->saveGroup($this->request->data)) {
+            if ($this->Group->save($this->request->data)) {
                 $this->Session->setFlash(__('Group has been saved.'));
                 return $this->redirect(array('action' => 'index'));
             }
@@ -98,7 +98,7 @@ class GroupsController extends AppController
         if ($this->request->is(array('post', 'put'))) {
             $this->request->data['Group']['id'] = $id;
             //Calls the Group Model Save Model
-            if ($this->Group->saveGroup($this->request->data)) {
+            if ($this->Group->save($this->request->data)) {
                 $this->Session->setFlash(__('Group has been saved.'));
                 return $this->redirect(array('action' => 'index'));
             }
@@ -128,17 +128,16 @@ class GroupsController extends AppController
 
         //Finds the post related to id using the "Magic Find Types"
         //http://book.cakephp.org/2.0/en/models/retrieving-your-data.html#magic-find-types
-        $group = $this->Acl->Aro->findById($id);
-
-        $this->Group->formatPermissionSet($group);
-
+        $this->Acl->Aro->recursive = -1;
+        $group                     = $this->Acl->Aro->findById($id);
+        $result                    = $this->Group->formatPermissionSet($group);
         //Check if the id helped return a group or not
         if (!$group) {
             throw new NotFoundException(__('Invalid group'));
         }
 
         //Set the group related array in view as $group
-        $this->set('group', $group);
+        $this->set('result', $result);
     }//end view()
 
 
@@ -162,6 +161,55 @@ class GroupsController extends AppController
             return $this->redirect(array('action' => 'index'));
         }
     }//end delete()
+
+
+    /**
+     * This action is using add action for ARO::ACO
+     *
+     * @return void
+     */
+    public function permissions()
+    {
+        $this->Group->checkBuildAclTables();
+        $acos   = $this->Group->buildAcos();
+        $grants = array(
+                   "allow" => __("Allow"),
+                   "deny"  => __("Deny"),
+                  );
+        $this->__getGroupList(false, false, 'aros', false);
+        $this->set(compact('acos', 'grants'));
+
+        if ($this->request->is('post')) {
+            $this->__addRequestedPermissions();
+        }
+    }//end permissions()
+
+
+    /**
+     * This action adds permission to the aro_acos
+     *
+     * @return void
+     */
+    private function __addRequestedPermissions()
+    {
+        $data = $this->request->data;
+
+        // If form is submitted
+        if ($data && !empty($data['Group']['aro_id'])
+            && !empty($data['Group']['aco_id'])
+            && in_array($data['Group']['grant_id'], array('allow', 'deny'))
+        ) {
+            // Build ACO id, permission and ACO alias
+            $aroId      = (int)$data['Group']['aro_id'];
+            $acoId      = (int)$data['Group']['aco_id'];
+            $permission = $data['Group']['grant_id'];
+            $acoAlias   = $this->Acl->Aco->field('Aco.alias', 'Aco.id = ' . $acoId);
+            $aroAlias   = $this->Acl->Aro->field('Aro.alias', 'Aro.id = ' . $aroId);
+            $this->Acl->$permission($aroAlias, $acoAlias);
+            // Set success message in session
+            $this->Session->setFlash(__('Permission has been saved successfully', true));
+        }
+    }//end __addRequestedPermissions()
 
 
     /**
@@ -201,12 +249,15 @@ class GroupsController extends AppController
         if ((bool)$results !== false) {
             if ($setNullparent) {
                 $$setView = am($$setView, $results);
+            } else {
+                $$setView = $results;
             }
         }
 
         if ($returnList) {
             return $$setView;
         }
+
         //Sets the data for the view Groups/add.ctp
         $this->set(compact($setView));
     }//end __getGroupList()
