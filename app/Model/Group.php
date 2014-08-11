@@ -204,6 +204,8 @@ class Group extends AppModel
     {
         // Get the database connect object
         $db = ConnectionManager::getDataSource('default');
+        //Don't Cache the Sources
+        $db->cacheSources = false;
 
         // Get tables list
         $tables = $db->listSources();

@@ -6,20 +6,20 @@
  * PHP version 5.3
  *
  * @category Controller
- * @package  Shdlr
+ * @package  Caketuts
  * @author   Atish Goswami <atishgoswami@gmail.com>
- * @license  http://shdlr.com Private
- * @link     http://shdlr.com
+ * @license  http://example.com Private
+ * @link     http://example.com
  */
 App::uses('Controller', 'Controller');
 /**
  * Application controller class
  *
  * @category Controller
- * @package  Shdlr
+ * @package  Caketuts
  * @author   Atish Goswami <atishgoswami@gmail.com>
- * @license  http://shdlr.com Private
- * @link     http://shdlr.com
+ * @license  http://example.com Private
+ * @link     http://example.com
  *
  */
 class AppController extends Controller
